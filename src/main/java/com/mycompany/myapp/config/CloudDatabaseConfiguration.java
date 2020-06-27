@@ -1,18 +1,16 @@
 package com.mycompany.myapp.config;
 
-import com.github.mongobee.Mongobee;
-import io.github.jhipster.config.JHipsterConstants;
-import io.github.jhipster.domain.util.JSR310DateConverters.*;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.Cloud;
-import org.springframework.cloud.CloudException;
 import org.springframework.cloud.config.java.AbstractCloudConfig;
-import org.springframework.cloud.service.ServiceInfo;
-import org.springframework.cloud.service.common.MongoServiceInfo;
-import org.springframework.context.annotation.*;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -20,6 +18,14 @@ import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import org.springframework.data.mongodb.core.mapping.event.ValidatingMongoEventListener;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+
+import com.github.cloudyrock.mongock.SpringBootMongock;
+import com.github.cloudyrock.mongock.SpringBootMongockBuilder;
+
+import io.github.jhipster.config.JHipsterConstants;
+import io.github.jhipster.domain.util.JSR310DateConverters.DateToZonedDateTimeConverter;
+import io.github.jhipster.domain.util.JSR310DateConverters.DurationToLongConverter;
+import io.github.jhipster.domain.util.JSR310DateConverters.ZonedDateTimeToDateConverter;
 
 @Configuration
 @EnableMongoRepositories("com.mycompany.myapp.repository")
@@ -52,20 +58,26 @@ public class CloudDatabaseConfiguration extends AbstractCloudConfig {
     }
 
     @Bean
-    public Mongobee mongobee(MongoDbFactory mongoDbFactory, MongoTemplate mongoTemplate, Cloud cloud) {
-        log.debug("Configuring Cloud Mongobee");
-        List<ServiceInfo> matchingServiceInfos = cloud.getServiceInfos(MongoDbFactory.class);
-
-        if (matchingServiceInfos.size() != 1) {
-            throw new CloudException("No unique service matching MongoDbFactory found. Expected 1, found " + matchingServiceInfos.size());
-        }
-        MongoServiceInfo info = (MongoServiceInfo) matchingServiceInfos.get(0);
-        Mongobee mongobee = new Mongobee(info.getUri());
-        mongobee.setDbName(mongoDbFactory.getDb().getName());
-        mongobee.setMongoTemplate(mongoTemplate);
-        // package to scan for migrations
-        mongobee.setChangeLogsScanPackage("com.mycompany.myapp.config.dbmigrations");
-        mongobee.setEnabled(true);
-        return mongobee;
+    public SpringBootMongock mongobee(ApplicationContext ctx, MongoDbFactory mongoDbFactory, MongoTemplate mongoTemplate, Cloud cloud) {
+    	log.debug("Configuring Cloud Mongock");
+    	
+    	SpringBootMongockBuilder mb = new SpringBootMongockBuilder(mongoTemplate, "com.mycompany.myapp.config.dbmigrations").setApplicationContext(ctx);
+    	
+    	
+    	return mb.build();
+//    
+//        List<ServiceInfo> matchingServiceInfos = cloud.getServiceInfos(MongoDbFactory.class);
+//
+//        if (matchingServiceInfos.size() != 1) {
+//            throw new CloudException("No unique service matching MongoDbFactory found. Expected 1, found " + matchingServiceInfos.size());
+//        }
+//        MongoServiceInfo info = (MongoServiceInfo) matchingServiceInfos.get(0);
+//        Mongobee mongobee = new Mongobee(info.getUri());
+//        mongobee.setDbName(mongoDbFactory.getDb().getName());
+//        mongobee.setMongoTemplate(mongoTemplate);
+//        // package to scan for migrations
+//        mongobee.setChangeLogsScanPackage("com.mycompany.myapp.config.dbmigrations");
+//        mongobee.setEnabled(true);
+//        return mongobee;
     }
 }

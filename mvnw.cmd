@@ -22,6 +22,7 @@
 @REM
 @REM Required ENV vars:
 @REM JAVA_HOME - location of a JDK home dir
+SET JAVA_HOME=C:\dev\java\jdk-14.0.1
 @REM
 @REM Optional ENV vars
 @REM M2_HOME - location of maven2's installed home dir

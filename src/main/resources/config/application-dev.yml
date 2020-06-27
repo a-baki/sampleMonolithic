@@ -37,7 +37,7 @@ spring:
       indent-output: true
   data:
     mongodb:
-      uri: mongodb://localhost:27017
+      uri: mongodb+srv://appmongo:appmongo@cluster0-gly5b.mongodb.net
       database: sampleMonolithic
   mail:
     host: localhost

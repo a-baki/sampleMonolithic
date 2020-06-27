@@ -1,12 +1,14 @@
 package com.mycompany.myapp.config.dbmigrations;
 
-import com.github.mongobee.changeset.ChangeLog;
-import com.github.mongobee.changeset.ChangeSet;
+import java.time.Instant;
+
+import org.springframework.data.mongodb.core.MongoTemplate;
+
+import com.github.cloudyrock.mongock.ChangeLog;
+import com.github.cloudyrock.mongock.ChangeSet;
 import com.mycompany.myapp.domain.Authority;
 import com.mycompany.myapp.domain.User;
 import com.mycompany.myapp.security.AuthoritiesConstants;
-import java.time.Instant;
-import org.springframework.data.mongodb.core.MongoTemplate;
 
 /**
  * Creates the initial database setup.
